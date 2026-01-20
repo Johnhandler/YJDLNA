@@ -257,12 +257,17 @@ withFilterContext:(nullable id)filterContext{
             if (response != nil && data != nil) {
                 NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
                 if (httpResponse.statusCode == 200) {
-                    NSString *xmlString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-                    NSArray *array = [CLXMLParser parseXMLArray:xmlString];
                     device = [[CLUPnPDevice alloc] init];
                     device.uuid = usn;
-                    device.loaction = location;
-                    [device setArray:array];
+                    device.loaction = URL;
+                    
+                    NSString *xmlString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+                    NSArray *array = [CLXMLParser parseXMLArray:xmlString];
+                    if (array.count == 0) {
+                        [device setArray:@[[CLXMLParser parseXMLString:xmlString]]];
+                    } else {
+                        [device setArray:array];
+                    }
                 }
             }
         }
